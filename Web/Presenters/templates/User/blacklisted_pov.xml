@@ -21,6 +21,39 @@
             <a n:if="!$user->isHideFromGlobalFeedEnabled()" class="profile_link" style="display:block;width:96%;" id="__ignoreSomeone" data-val='{!$ignore_status ? 1 : 0}' data-id="{$user->getId()}">
                 {if !$ignore_status}{_ignore_user}{else}{_unignore_user}{/if}
             </a>
+            {if $thisUser->getChandlerUser()->can("substitute")->model('openvk\Web\Models\Entities\User')->whichBelongsTo(0)}
+                    <a href="/setSID/{$user->getChandlerUser()->getId()}?hash={rawurlencode($csrfToken)}" class="profile_link" style="width: 194px;">
+                        {tr("login_as", $user->getFirstName())}
+                    </a>
+                {/if}
+                
+                {if $thisUser->getChandlerUser()->can("access")->model("admin")->whichBelongsTo(NULL)}
+                    <a href="/admin/users/id{$user->getId()}" class="profile_link" style="width: 194px;">
+                        {_manage_user_action}
+                    </a>
+                    <a href="javascript:banUser()" class="profile_link" style="width: 194px;">
+                        {_ban_user_action}
+                    </a>
+                    <a href="javascript:warnUser()" class="profile_link" style="width: 194px;">
+                        {_warn_user_action}
+                    </a>
+                    <a href="/admin/user{$user->getId()}/bans" class="profile_link" rel="nofollow">
+                        {_blocks}
+                    </a>
+                    <a href="/admin/logs?uid={$user->getId()}" class="profile_link" style="width: 194px;" rel="nofollow">
+                        {_last_actions}
+                    </a>
+                {/if}
+
+                {if $thisUser->getChandlerUser()->can('write')->model('openvk\Web\Models\Entities\TicketReply')->whichBelongsTo(0)}
+                    <a href="javascript:toggleBanInSupport()" class="profile_link" style="width: 194px;">
+                        {if $user->isBannedInSupport()}
+                            {_unban_in_support_user_action}
+                        {else}
+                            {_ban_in_support_user_action}
+                        {/if}
+                    </a>
+                {/if}
             <a class="profile_link" style="display:block;width:96%;" href="javascript:reportUser({$user->getId()})">{_report}</a>
         </div>
     </div>

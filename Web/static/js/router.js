@@ -102,6 +102,8 @@ window.router = new class {
         } else {
             if(u('.page_header').hasClass('search_expanded_at_all')) {
                 u('.page_header').removeClass('search_expanded_at_all').removeClass('search_expanded')
+            } else {
+                u('.page_header').removeClass('search_expanded')
             }
         }
         
@@ -394,32 +396,4 @@ window.addEventListener('popstate', (e) => {
         url: location.href,
         push_state: false,
     })
-})
-
-document.addEventListener('DOMContentLoaded', () => {
-    const deadline = new Date('Jan 01, 2025 00:00:00');
-  
-    function updateTimer() {
-      const now = new Date();
-      const diff = deadline - now;
-  
-      if (diff <= 0) {
-        document.querySelector('.timer__result').textContent = 'С Новым Годом!';
-        document.querySelector('.timer__items').classList.add('hidden');
-      } else {
-        const days = Math.floor(diff / (86400000)); 
-        const hours = Math.floor((diff % (86400000)) / (3600000));
-        const minutes = Math.floor((diff % (3600000)) / 60000); 
-        const seconds = Math.floor((diff % 60000) / 1000); 
-  
-        document.querySelector('.timer__days').textContent = days;
-        document.querySelector('.timer__hours').textContent = hours;
-        document.querySelector('.timer__minutes').textContent = minutes;
-        document.querySelector('.timer__seconds').textContent = seconds;
-      }
-    }
-  
-    updateTimer(); // сука пиздец какой-то..
-  
-    setInterval(updateTimer, 1000);
-  });
+});

@@ -38,7 +38,7 @@ final class UserPresenter extends OpenVKPresenter
 
                 $this->template->ignore_status = $user->isIgnoredBy($this->user->identity);
                 $this->template->user = $user;
-            }  else if($this->user->identity->isBlacklistedBy($user)) {
+            } else if($this->user->identity && $this->user->identity->isBlacklistedBy($user)) {
                 $this->template->_template = "User/blacklisted.xml";
                 
                 $this->template->ignore_status = $user->isIgnoredBy($this->user->identity);
@@ -61,6 +61,7 @@ final class UserPresenter extends OpenVKPresenter
             $this->template->audios      = (new Audios)->getRandomThreeAudiosByEntityId($user->getId());
             $this->template->audiosCount = (new Audios)->getUserCollectionSize($user);
             $this->template->audioStatus = $user->getCurrentAudioStatus();
+            $this->template->additionalFields = $user->getAdditionalFields(true);
 
             $this->template->user = $user;
 
@@ -285,10 +286,46 @@ final class UserPresenter extends OpenVKPresenter
                 $this->returnJson([
                     "success" => true
                 ]);
+            } elseif($_GET['act'] === "additional") {
+                $maxAddFields = ovkGetQuirk("users.max-fields");
+                $items = [];
+
+                for($i = 0; $i < $maxAddFields; $i++) {
+                    if(!$this->postParam("name_".$i)) {
+                        continue;
+                    }
+
+                    $items[] = [
+                        "name"  => $this->postParam("name_".$i),
+                        "text"  => $this->postParam("text_".$i),
+                        "place" => $this->postParam("place_".$i),
+                    ];
+                }
+
+                \openvk\Web\Models\Entities\UserInfoEntities\AdditionalField::resetByOwner($this->user->id);
+                foreach($items as $new_field_info) {
+                    $name = ovk_proc_strtr($new_field_info["name"], 50);
+                    $text = ovk_proc_strtr($new_field_info["text"], 1000);
+                    if(ctype_space($name) || ctype_space($text)) {
+                        continue;
+                    }
+
+                    $place = (int)($new_field_info["place"]);
+
+                    $new_field = new \openvk\Web\Models\Entities\UserInfoEntities\AdditionalField;
+                    $new_field->setOwner($this->user->id);
+                    $new_field->setName($name);
+                    $new_field->setText($text);
+                    $new_field->setPlace([0, 1][$place] ? $place : 0);
+
+                    $new_field->save();
+                }    
             }
             
             try {
-                $user->save();
+                if($_GET['act'] !== "additional") {
+                    $user->save();
+                }
             } catch(\PDOException $ex) {
                 if($ex->getCode() == 23000)
                     $this->flashFail("err", tr("error"), tr("error_shorturl"));
@@ -300,7 +337,7 @@ final class UserPresenter extends OpenVKPresenter
         }
         
         $this->template->mode = in_array($this->queryParam("act"), [
-            "main", "contacts", "interests", "avatar", "backdrop"
+            "main", "contacts", "interests", "avatar", "backdrop", "additional"
         ]) ? $this->queryParam("act")
             : "main";
         
@@ -562,7 +599,8 @@ final class UserPresenter extends OpenVKPresenter
                     "menu_novajoj"   => "news",
                     "menu_ligiloj"   => "links",
                     "menu_standardo" => "poster",
-                    "menu_aplikoj"   => "apps"
+                    "menu_aplikoj"   => "apps",
+                    "menu_doxc"      => "docs",
                 ];
                 foreach($settings as $checkbox => $setting)
                     $user->setLeftMenuItemStatus($setting, $this->checkbox($checkbox));

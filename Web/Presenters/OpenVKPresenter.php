@@ -201,7 +201,7 @@ abstract class OpenVKPresenter extends SimplePresenter
         if(!$this->template)
             $this->template = new \stdClass;
         
-        $this->template->isXmas = intval(date('d')) >= 1 && date('m') == 12 || intval(date('d')) <= 15 && date('m') == 1 ? true : false;
+        $this->template->isXmas = intval(date('d')) >= 1 && date('m') == 12 || intval(date('d')) <= 13 && date('m') == 1 ? true : false;
         $this->template->isTimezoned = Session::i()->get("_timezoneOffset");
 
         $userValidated = 0;

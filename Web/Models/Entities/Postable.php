@@ -100,6 +100,25 @@ abstract class Postable extends Attachable
         foreach($sel as $like)
             yield (new Users)->get($like->origin);
     }
+
+    function getAccessKey(): string
+    {
+        return $this->getRecord()->access_key;
+    }
+
+    function checkAccessKey(?string $access_key): bool
+    {
+        if($this->getAccessKey() === $access_key) {
+            return true;
+        }
+
+        return !$this->isPrivate();
+    }
+
+    function isPrivate(): bool
+    {
+        return (bool) $this->getRecord()->unlisted;
+    }
     
     function isAnonymous(): bool
     {

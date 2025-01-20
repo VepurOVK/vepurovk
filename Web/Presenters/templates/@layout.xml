@@ -142,6 +142,7 @@
                                                 <option n:attr="selected => $_REQUEST['section'] == 'apps'" value="apps">{_s_by_apps}</option>
                                                 <option n:attr="selected => $_REQUEST['section'] == 'audios'" value="audios">{_s_by_audios}</option>
                                                 <option n:attr="selected => $_REQUEST['section'] == 'audios_playlists'" value="audios_playlists">{_s_by_audios_playlists}</option>
+                                                <option n:attr="selected => $_REQUEST['section'] == 'docs'" value="docs">{_s_by_documents}</option>
                                             </select>
                                         </div>
                                         <button class="search_box_button">
@@ -196,8 +197,13 @@
                                     (<b>{$thisUser->getNotificationsCount()}</b>)
                                 </object>
                             </a>
-                            <a n:if="$thisUser->getLeftMenuItemStatus('apps')" href="/apps?act=installed" class="link">{_my_apps}</a>
                             <a href="/settings" class="link">{_my_settings}</a>
+
+                            {if $thisUser->getLeftMenuItemStatus('docs') || $thisUser->getLeftMenuItemStatus('apps')}
+                                <div class="menu_divider"></div>
+                                <a n:if="$thisUser->getLeftMenuItemStatus('apps')" href="/apps?act=installed" class="link">{_apps}</a>
+                                <a n:if="$thisUser->getLeftMenuItemStatus('docs')" href="/docs" class="link">{_my_documents}</a>
+                            {/if}
                             
                             {var $canAccessAdminPanel = $thisUser->getChandlerUser()->can("access")->model("admin")->whichBelongsTo(NULL)}
                             {var $canAccessHelpdesk   = $thisUser->getChandlerUser()->can("write")->model('openvk\Web\Models\Entities\TicketReply')->whichBelongsTo(0)}
@@ -241,35 +247,12 @@
                                 </a>
                             </div>
 
-                            <div n:if="OPENVK_ROOT_CONF['openvk']['preferences']['bellsAndWhistles']['timer']" id="timer timer-1">
-							<div class="timer timer-1">
-                            <div class="timer__items">
-							<p>
-							<div class="timer__item new_year_coming"><b>{_new_year_coming}</b></div>
-							<p>
-                            <div class="timer__item timer__days">0</div>
-							<span class="timer__item timer__days">{_days}</span>
-							<p>
-                            <div class="timer__item timer__hours">0</div>
-							<span class="timer__item timer__hours">{_hours}</span>
-							<p>
-                            <div class="timer__item timer__minutes">0</div>
-							<span class="timer__item timer__minutes">{_minutes}</span>
-							<p>
-                            <div class="timer__item timer__seconds">0</div>
-							<span class="timer__item timer__seconds">{_seconds}</span>
-							<p>
-                            </div>
-                            <b><div class="timer__item timer__result"></div></b>
-                            </div>
-							</div>
-
                             <div id="news" n:if="OPENVK_ROOT_CONF['openvk']['preferences']['news']['enable']">
                                 <b>{_news} </b>
                                     <hr size="1">
                                     <text>{php echo OPENVK_ROOT_CONF['openvk']['preferences']['news']['title'];}</text>
                                     <br><br>
-                                    <a href="{php echo OPENVK_ROOT_CONF['openvk']['preferences']['news']['link'];}">Подробнее »</a>
+                                    <a href="{php echo OPENVK_ROOT_CONF['openvk']['preferences']['news']['link'];}">{_news_more} »</a>
                             </div>
                             
                             <div n:if="OPENVK_ROOT_CONF['openvk']['preferences']['commerce'] && $thisUser->getCoins() != 0" id="votesBalance">
@@ -400,7 +383,7 @@
                 {/foreach}
                 <a href="/language" class="link">all languages &raquo;</a>
             </p>
-            <p>VepurOVK © 2022-{php echo date("Y")} |<a href="https://saursvepur.xyz"> saursvepur </a>|<a href="https://github.com/saursvepur/vepurovk"> GitHub </a>| is an <a href="/about:openvk">OpenVK</a></p>
+            <p>VepurOVK © 2022-{php echo date("Y")} |<a href="https://saursvepur.xyz"> saursvepur </a>|<a href="https://github.com/saursvepur/vepurovk"> GitHub </a></p>
             <p n:ifcontent>
                 {php echo OPENVK_ROOT_CONF["openvk"]["appearance"]["motd"]}
             </p>
@@ -420,6 +403,7 @@
         {script "js/scroll.js"}
         {script "js/player.js"}
         {script "js/al_wall.js"}
+        {script "js/al_docs.js"}
         {script "js/al_api.js"}
         {script "js/al_mentions.js"}
         {script "js/al_polls.js"}
@@ -434,6 +418,13 @@
             {script "js/al_notifs.js"}
             {script "js/al_feed.js"}
         {/ifset}
+
+        {if OPENVK_ROOT_CONF['openvk']['preferences']['bellsAndWhistles']['fartscroll']}
+            <script src="https://unpkg.com/fartscroll@1.0.0/fartscroll.js"></script>
+            <script>
+                fartscroll(400);
+            </script>
+        {/if}
 
         <script>bsdnHydrate();</script>
 
@@ -475,8 +466,11 @@
                 "audio_genres": {\openvk\Web\Models\Entities\Audio::genres},
                 "at_search": {$atSearch ?? false},
                 "max_attachments": {\OPENVK_ROOT_CONF["openvk"]["preferences"]["wall"]["postSizes"]["maxAttachments"] ?? 10},
-                "max_filesize_mb": 5,
+                "max_filesize_mb": 100,
                 "current_id": {$thisUser ? $thisUser->getId() : 0},
+                "max_add_fields": {ovkGetQuirk("users.max-fields")},
+                "docs_max": {\OPENVK_ROOT_CONF["openvk"]["preferences"]["docs"]["maxSize"]},
+                "docs_allowed": {\OPENVK_ROOT_CONF["openvk"]["preferences"]["docs"]["allowedFormats"]},
             }
         </script>
 

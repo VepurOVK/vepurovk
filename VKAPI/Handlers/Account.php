@@ -236,20 +236,27 @@ final class Account extends VKAPIRequestHandler
         
         if($owner_id < 0)
             return 1;
+
         if($owner_id == $this->getUser()->getId())
             $this->fail(15, "Access denied: cannot blacklist yourself");
+
         $config_limit = OPENVK_ROOT_CONF['openvk']['preferences']['blacklists']['limit'] ?? 100;
         $user_blocks  = $this->getUser()->getBlacklistSize();
         if(($user_blocks + 1) > $config_limit)
             $this->fail(-7856, "Blacklist limit exceeded");
+
         $entity = get_entity_by_id($owner_id);
         if(!$entity || $entity->isDeleted())
             return 0;
+
         if($entity->isBlacklistedBy($this->getUser()))
             return 1;
+
         $this->getUser()->addToBlacklist($entity);
+
         return 1;
     }
+
     function unban(int $owner_id): int
     {
         $this->requireUser();
@@ -257,19 +264,26 @@ final class Account extends VKAPIRequestHandler
         
         if($owner_id < 0)
             return 1;
+
         if($owner_id == $this->getUser()->getId())
             return 1;
+
         $entity = get_entity_by_id($owner_id);
-        if(!$entity || $entity->isDeleted())
+        if(!$entity)
             return 0;
+
         if(!$entity->isBlacklistedBy($this->getUser()))
             return 1;
+
         $this->getUser()->removeFromBlacklist($entity);
+
         return 1;
     }
+
     function getBanned(int $offset = 0, int $count = 100, string $fields = ""): object
     {
         $this->requireUser();
+
         $result = (object)[
             'count' => $this->getUser()->getBlacklistSize(),
             'items' => [],
@@ -281,5 +295,50 @@ final class Account extends VKAPIRequestHandler
         }
         
         return $result;
+    }
+
+    function saveInterestsInfo(
+    string $interests = NULL, 
+    string $fav_music = NULL,
+    string $fav_films = NULL,
+    string $fav_shows = NULL,
+    string $fav_books = NULL,
+    string $fav_quote = NULL,
+    string $fav_games = NULL,
+    string $about = NULL,
+    )
+    {
+        $this->requireUser();
+        $this->willExecuteWriteAction();
+
+        $user = $this->getUser();
+        $changes = 0;
+        $changes_array = [
+            "interests" => $interests, 
+            "fav_music" => $fav_music, 
+            "fav_films" => $fav_films, 
+            "fav_books" => $fav_books, 
+            "fav_shows" => $fav_shows, 
+            "fav_quote" => $fav_quote, 
+            "fav_games" => $fav_games, 
+            "about"     => $about,
+        ];
+
+        foreach($changes_array as $change_name => $change_value) {
+            $set_name = "set".ucfirst($change_name);
+            $get_name = "get".str_replace("Fav", "Favorite", str_replace("_", "", ucfirst($change_name)));
+            if(!is_null($change_value) && $change_value !== $user->$get_name()) {
+                $user->$set_name(ovk_proc_strtr($change_value, 1000));
+                $changes += 1;
+            }
+        }
+
+        if($changes > 0) {
+            $user->save();
+        }
+
+        return (object) [
+            "changed" => (int)($changes > 0),
+        ];
     }
 }
