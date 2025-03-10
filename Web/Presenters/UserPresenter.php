@@ -5,7 +5,7 @@ use openvk\Web\Util\Sms;
 use openvk\Web\Themes\Themepacks;
 use openvk\Web\Models\Entities\{Photo, Post, EmailChangeVerification};
 use openvk\Web\Models\Entities\Notifications\{CoinsTransferNotification, RatingUpNotification};
-use openvk\Web\Models\Repositories\{Users, Clubs, Albums, Videos, Notes, Vouchers, EmailChangeVerifications, Audios};
+use openvk\Web\Models\Repositories\{Users, Clubs, Albums, Videos, Notes, Vouchers, EmailChangeVerifications, Audios, Faves};
 use openvk\Web\Models\Exceptions\InvalidUserNameException;
 use openvk\Web\Util\Validator;
 use Chandler\Security\Authenticator;
@@ -29,17 +29,20 @@ final class UserPresenter extends OpenVKPresenter
     function renderView(int $id): void
     {
         $user = $this->users->get($id);
+
         if(!$user || $user->isDeleted() || !$user->canBeViewedBy($this->user->identity)) {
             if(!is_null($user) && $user->isDeactivated()) {
                 $this->template->_template = "User/deactivated.xml";
+                
                 $this->template->user = $user;
-            } else if($user->isBlacklistedBy($this->user->identity)) {
-                $this->template->_template = "User/blacklisted_pov.xml";
+            } else if(!is_null($user) && $this->user->identity && $this->user->identity->isBlacklistedBy($user)) {
+                $this->template->_template = "User/blacklisted.xml";
 
+                $this->template->blacklist_status = $user->isBlacklistedBy($this->user->identity);
                 $this->template->ignore_status = $user->isIgnoredBy($this->user->identity);
                 $this->template->user = $user;
-            } else if($this->user->identity && $this->user->identity->isBlacklistedBy($user)) {
-                $this->template->_template = "User/blacklisted.xml";
+            } else if(!is_null($user) && $user->isBlacklistedBy($this->user->identity)) {
+                $this->template->_template = "User/blacklisted_pov.xml";
                 
                 $this->template->ignore_status = $user->isIgnoredBy($this->user->identity);
                 $this->template->user = $user;
@@ -429,6 +432,7 @@ final class UserPresenter extends OpenVKPresenter
 
     function renderDeleteAvatar() {
         $this->assertUserLoggedIn();
+        $this->assertNoCSRF();
         $this->willExecuteWriteAction();
 
         $avatar = $this->user->identity->getAvatarPhoto();
@@ -601,6 +605,7 @@ final class UserPresenter extends OpenVKPresenter
                     "menu_standardo" => "poster",
                     "menu_aplikoj"   => "apps",
                     "menu_doxc"      => "docs",
+                    "menu_feva"      => "fave",
                 ];
                 foreach($settings as $checkbox => $setting)
                     $user->setLeftMenuItemStatus($setting, $this->checkbox($checkbox));
@@ -647,6 +652,67 @@ final class UserPresenter extends OpenVKPresenter
         
         $this->template->user   = $user;
         $this->template->themes = Themepacks::i()->getThemeList();
+    }
+
+    public function renderFave(): void
+    {
+        $this->assertUserLoggedIn();
+
+        $page    = (int) ($this->queryParam("p") ?? 1);
+        $section = $this->queryParam("section") ?? "posts";
+        $display_section = "posts";
+        $data    = null;
+        $count   = 0;
+
+        switch ($section) {
+            default:
+                $this->notFound();
+                break;
+            case 'wall':
+            case 'post':
+            case 'posts':
+                $data = (new Faves())->fetchLikesSection($this->user->identity, 'Post', $page);
+                $count = (new Faves())->fetchLikesSectionCount($this->user->identity, 'Post');
+                $display_section = "posts";
+                break;
+            case 'comment':
+            case 'comments':
+                $data = (new Faves())->fetchLikesSection($this->user->identity, 'Comment', $page);
+                $count = (new Faves())->fetchLikesSectionCount($this->user->identity, 'Comment');
+                $display_section = "comments";
+                break;
+            case 'photo':
+            case 'photos':
+                $data = (new Faves())->fetchLikesSection($this->user->identity, 'Photo', $page);
+                $count = (new Faves())->fetchLikesSectionCount($this->user->identity, 'Photo');
+                $display_section = "photos";
+                break;
+            case 'video':
+            case 'videos':
+                $data = (new Faves())->fetchLikesSection($this->user->identity, 'Video', $page);
+                $count = (new Faves())->fetchLikesSectionCount($this->user->identity, 'Video');
+                $display_section = "videos";
+                break;
+        }
+
+        $this->template->data = iterator_to_array($data);
+        $this->template->count = $count;
+        $this->template->page  = $page;
+        $this->template->perPage = OPENVK_DEFAULT_PER_PAGE;
+        $this->template->section = $display_section;
+
+        $this->template->paginatorConf = (object) [
+            "page"      => $page,
+            "count"     => $count,
+            "amount"    => sizeof($this->template->data),
+            "perPage"   => $this->template->perPage,
+            "atBottom"  => false,
+            "tidy"      => true,
+            'pageCount' => ceil($count / $this->template->perPage),
+        ];
+        $this->template->extendedPaginatorConf = clone $this->template->paginatorConf;
+        $this->template->extendedPaginatorConf->space = 11;
+        $this->template->paginatorConf->atTop = true;
     }
 
     function renderDeactivate(): void

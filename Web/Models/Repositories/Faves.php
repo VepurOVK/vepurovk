@@ -1,46 +1,52 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
+
 namespace openvk\Web\Models\Repositories;
+
 use Chandler\Database\DatabaseConnection;
-use openvk\Web\Models\Entities\{Fave, User};
+use openvk\Web\Models\Entities\User;
+use Nette\Database\Table\ActiveRow;
 
 class Faves
 {
     private $context;
-    private $faves;
-    private $cats;
-    
-    function __construct()
+    private $likes;
+
+    public function __construct()
     {
         $this->context = DatabaseConnection::i()->getContext();
-        $this->faves   = $this->context->table("faves");
-    }
-    
-    function get(int $id): ?Fave
-    {
-        $fave = $this->faves->get($id);
-        if(!$fave)
-            return NULL;
-        
-        return new Fave($fave);
-    }
-    
-    function getFavesByUser(User $user, int $page = 1, ?int $perPage = NULL, string $model = "openvk\\Web\\Models\\Repositories\\Posts"): \Traversable
-    {
-        $perPage = $perPage ?? 10;
-
-        foreach($this->faves->where("owner", $user->getId())->where("deleted", 0)->where("model", $model)->page($page, $perPage)->order("created DESC") as $fave)
-            yield new Fave($fave);
+        $this->likes = $this->context->table("likes");
     }
 
-    function getFavesCountByUser(User $user, string $model = "openvk\\Web\\Models\\Repositories\\Posts"): int
+    private function fetchLikes(User $user, string $class = 'Post')
     {
-        return sizeof($this->faves->where("owner", $user->getId())->where(["deleted" => 0, "model" => $model]));
+        $fetch = $this->likes->where([
+            "model"  => "openvk\\Web\\Models\\Entities\\" . $class,
+            "origin" => $user->getRealId(),
+        ]);
+
+        return $fetch;
     }
 
-    function getFavesByUserAndTarget(User $user, string $model, int $target)
+    public function fetchLikesSection(User $user, string $class = 'Post', int $page = 1, ?int $perPage = null): \Traversable
     {
-        $searchData = $this->faves->where("owner", $user->getId())->where("model", $model)->where("target", $target)->fetch();
-       
-        return is_null($searchData) ? NULL : new Fave($searchData);
+        $perPage ??= OPENVK_DEFAULT_PER_PAGE;
+        $fetch = $this->fetchLikes($user, $class)->page($page, $perPage)->order("index DESC");
+        foreach ($fetch as $like) {
+            $className = "openvk\\Web\\Models\\Repositories\\" . $class . "s";
+            $repo = new $className();
+            if (!$repo) {
+                continue;
+            }
+
+            $entity = $repo->get($like->target);
+            yield $entity;
+        }
+    }
+
+    public function fetchLikesSectionCount(User $user, string $class = 'Post')
+    {
+        return $this->fetchLikes($user, $class)->count();
     }
 }

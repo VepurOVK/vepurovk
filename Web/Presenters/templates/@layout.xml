@@ -199,10 +199,11 @@
                             </a>
                             <a href="/settings" class="link">{_my_settings}</a>
 
-                            {if $thisUser->getLeftMenuItemStatus('docs') || $thisUser->getLeftMenuItemStatus('apps')}
+                            {if $thisUser->getLeftMenuItemStatus('docs') || $thisUser->getLeftMenuItemStatus('apps') || $thisUser->getLeftMenuItemStatus('fave')}
                                 <div class="menu_divider"></div>
                                 <a n:if="$thisUser->getLeftMenuItemStatus('apps')" href="/apps?act=installed" class="link">{_apps}</a>
                                 <a n:if="$thisUser->getLeftMenuItemStatus('docs')" href="/docs" class="link">{_my_documents}</a>
+                                <a n:if="$thisUser->getLeftMenuItemStatus('fave')" href="/fave" class="link">{_bookmarks_tab}</a>
                             {/if}
                             
                             {var $canAccessAdminPanel = $thisUser->getChandlerUser()->can("access")->model("admin")->whichBelongsTo(NULL)}
@@ -231,7 +232,6 @@
                           class="link">
                             {strpos($menuItem["name"], "@") === 0 ? tr(substr($menuItem["name"], 1)) : $menuItem["name"]}
                         </a>
-                        <div id="_groupListPinnedGroups">
 
                             <div id="_groupListPinnedGroups">
                                 <div n:if="$thisUser->getPinnedClubCount() > 0" class="menu_divider"></div>
@@ -322,12 +322,7 @@
                         </form>
                     {/ifset}
                     </div>
-                </div>
-                {ifset $thisUser}
-                    {if !$thisUser->isBanned() && !$thisUser->isDeleted()}
-                        </div>
-                    {/if}
-                {/ifset}
+                </div>    
 
             <div class="page_body">
                 <div id="wrapH">
@@ -369,12 +364,12 @@
 
             <div class="navigation_footer">
                 <a href="/about" class="link">{_footer_about_instance}</a>
-                <a href="/vepurovk" class="link">{_footer_blog}</a>
-				<a href="/terms" class="link">{_footer_rules}</a>
+                <a href="/terms" class="link">{_footer_rules}</a>
+                <a href="/blog" class="link">{_footer_blog}</a>
+                <a href="/support" class="link">{_footer_help}</a>
                 <a href="/privacy" class="link">{_footer_privacy}</a>
-				<a href="/support" class="link">{_footer_help}</a>
             </div>
-			<p>
+            <p>
                 {var $currentUrl = $_SERVER["REQUEST_URI"]}
                 {foreach array_slice(getLanguages(), 0, 3) as $language}
                     <a href="/language?lg={$language['code']}&hash={urlencode($csrfToken)}&jReturnTo={php echo rawurlencode($currentUrl)}" rel="nofollow" title="{$language['native_name']}" class="link">

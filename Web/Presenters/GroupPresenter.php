@@ -347,6 +347,7 @@ final class GroupPresenter extends OpenVKPresenter
 
     function renderDeleteAvatar(int $id) {
         $this->assertUserLoggedIn();
+        $this->assertNoCSRF();
         $this->willExecuteWriteAction();
 
         $club = $this->clubs->get($id);
