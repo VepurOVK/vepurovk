@@ -14,7 +14,7 @@ final class AwayPresenter extends OpenVKPresenter
 
         header("HTTP/1.0 302 Found");
         header("X-Robots-Tag: noindex, nofollow, noarchive");
-        header("Location: " . $this->queryParam("to"));
+        header("Location: " . rawurldecode($this->queryParam("to")));
         exit;
     }
 

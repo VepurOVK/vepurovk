@@ -166,6 +166,10 @@ window.router = new class {
             return false
         }
 
+        if(url.indexOf('#close') != -1) {
+            return false
+        }
+
         return true
     }
 
@@ -207,6 +211,8 @@ window.router = new class {
             history.replaceState({'from_router': 1}, '', url)
         }
 
+        u('body').addClass('ajax_request_made')
+
         const parser = new DOMParser
         const next_page_request = await fetch(next_page_url, {
             method: 'AJAX',
@@ -224,6 +230,8 @@ window.router = new class {
         this.__closeMsgs()
         this.__unlinkObservers()
 
+        u('body').removeClass('ajax_request_made')
+
         try {
             this.__appendPage(parsed_content)
             await this.__integratePage()
@@ -237,6 +245,7 @@ window.router = new class {
 
 u(document).on('click', 'a', async (e) => {
     if(e.defaultPrevented) {
+        console.log('AJAX | Skipping because default is prevented')
         return
     }
     
@@ -247,7 +256,7 @@ u(document).on('click', 'a', async (e) => {
 
     if(id) {
         if(['act_tab_a', 'ki', 'used', '_pinGroup', 'profile_link', 'minilink-friends', 'minilink-albums', 'minilink-messenger', 'minilink-groups', 'minilink-notifications'].indexOf(id) == -1) {
-            console.log('AJAX | Skipping cuz maybe its function call link.')
+            console.log('AJAX | Пропущено, потому что, возможно, это ссылка на вызов функции.')
             return
         }
     }
@@ -263,7 +272,7 @@ u(document).on('click', 'a', async (e) => {
     }
 
     if(target.nodes[0].hasAttribute('download')) {
-        console.log('AJAX | Skipped because its download')
+        console.log('AJAX | Пропущено, так как это загрузка')
         return
     }
 
@@ -288,7 +297,7 @@ u(document).on('click', 'a', async (e) => {
 
     e.preventDefault()
 
-    console.log(`AJAX | Going to URL ${url}`)
+    console.log(`AJAX | Переход на URL ${url}`)
     await window.router.route({
         url: url,
     })
@@ -298,14 +307,10 @@ u(document).on('submit', 'form', async (e) => {
     if(e.defaultPrevented) {
         return
     }
-
+  
     if(u('#ajloader').hasClass('shown')) {
         e.preventDefault()
         return
-    }
-
-    if((localStorage.getItem('ux.disable_ajax_routing') ?? 0) == 1 || window.openvk.current_id == 0) {
-        return false
     }
 
     if(window.openvk.disable_ajax == 1) {
@@ -315,6 +320,10 @@ u(document).on('submit', 'form', async (e) => {
     if(e.target.closest('#write')) {
         const target = u(e.target)
         collect_attachments_node(target)
+    }
+
+    if((localStorage.getItem('ux.disable_ajax_routing') ?? 0) == 1 || window.openvk.current_id == 0) {
+        return false
     }
 
     u('#ajloader').addClass('shown')
@@ -392,8 +401,10 @@ window.addEventListener('popstate', (e) => {
         return
     }*/
 
-    window.router.route({
-        url: location.href,
-        push_state: false,
-    })
-});
+    if(e.state != null) {
+        window.router.route({
+            url: location.href,
+            push_state: false,
+        })
+    }
+})

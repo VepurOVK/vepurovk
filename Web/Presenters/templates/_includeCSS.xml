@@ -17,7 +17,7 @@
             {/if}
         {/if}
 
-        <link rel="stylesheet" href="/themepack/{$theme->getId()}/{$theme->getVersion()}/stylesheet/styles.css" />
+        <link n:if="$theme->getId() != 'mobile_ovk'" rel="stylesheet" href="/themepack/{$theme->getId()}/{$theme->getVersion()}/stylesheet/styles.css" />
 
         {if $isXmas}
             <link rel="stylesheet" href="/themepack/{$theme->getId()}/{$theme->getVersion()}/resource/xmas.css" />

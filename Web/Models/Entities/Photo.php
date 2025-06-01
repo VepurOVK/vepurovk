@@ -291,9 +291,14 @@ class Photo extends Media
         return "/photo" . $this->getPrettyId();
     }
 
-    function getAlbum(): ?Album
+    public function getAlbum(): ?Album
     {
-        return (new Albums)->getAlbumByPhotoId($this);
+        $album = (new Albums())->getAlbumByPhotoId($this);
+        if (!$album || $album->isDeleted()) {
+            return null;
+        }
+
+        return $album;
     }
 
     function toVkApiStruct(bool $photo_sizes = true, bool $extended = false): object

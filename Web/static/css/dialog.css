@@ -51,6 +51,7 @@ body.dimmed > .dimmer #absolute_territory {
 .ovk-diag-body {
     padding: 20px;
     min-height: 110px;
+    max-height: 83vh
 }
 
 .ovk-diag-action {

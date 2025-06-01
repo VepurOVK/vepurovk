@@ -131,7 +131,7 @@ u(document).on('click', '.docMainItem #edit_icon', async (e) => {
         title: tr("document_editing_in_general"),
         body: `
             <p><b>${tr("info_name")}</b></p>
-            <input maxlength="128" type="text" name="doc_name" value="${doc.title}" placeholder="...">
+            <input maxlength="128" type="text" name="doc_name" value="${escapeHtml(doc.title)}" placeholder="...">
 
             <label>
                 <input value="0" type="radio" name="doc_access" ${doc.folder_id != 3 ? "checked" : ''}>
@@ -144,7 +144,7 @@ u(document).on('click', '.docMainItem #edit_icon', async (e) => {
             </label>
 
             <p><b>${tr("tags")}</b></p>
-            <input maxlength="256" type="text" name="doc_tags" value="${doc.tags.join(',')}" placeholder="...">
+            <input maxlength="256" type="text" name="doc_tags" value="${escapeHtml(doc.tags.join(','))}" placeholder="...">
             <br>
             <label>
                 <input type="checkbox" name="doc_owner" ${doc.is_hidden ? "checked" : ''}>
@@ -267,6 +267,10 @@ u(document).on("click", ".docListViewItem a.viewerOpener, a.docGalleryItem", asy
         return
     }
 
+    if(window.openvk.current_id == 0) {
+        return
+    }
+
     const target = u(e.target)
     const link   = target.closest('a')
     if(target.closest(".embeddable").length > 0) {
@@ -328,7 +332,7 @@ async function __docAttachment(form, ctx = "wall", source = "user", source_arg =
                         <text id="photo_com_title_photos">
                             ${tr("select_doc")}
                         </text>
-                        <span style="display: inline-flex;gap: 7px;">
+                        <span style="display: inline-flex;gap: 7px;margin-left: 5px;">
                             ${source != "user" ? `<a id="_doc_picker_go_to_my">${tr("go_to_my_documents")}</a>`: ""}
                             <a id="_doc_picker_upload">${tr("upload_button")}</a>
                         </span>

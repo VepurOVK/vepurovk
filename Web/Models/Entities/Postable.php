@@ -65,9 +65,9 @@ abstract class Postable extends Attachable
         return new DateTime($edited);
     }
     
-    function getComments(int $page, ?int $perPage = NULL): \Traversable
+    public function getComments(int $page, ?int $perPage = null, string $sort = "ASC"): \Traversable
     {
-        return (new Comments)->getCommentsByTarget($this, $page, $perPage);
+        return (new Comments())->getCommentsByTarget($this, $page, $perPage, $sort);
     }
     
     function getCommentsCount(): int

@@ -913,6 +913,14 @@ span {
     font-weight: normal;
 }
 
+.post-hidden {
+    display: none;
+}
+
+.ignore-message {
+    padding: 5px 0;
+}
+
 #logininput {
     width: 123px;
     height: 21px;
@@ -1860,6 +1868,7 @@ body.scrolled .toTop:hover, .toTop.has_down:hover {
 
 #ovkDraw {
     border: 1px solid #757575;
+    min-height: 510px;
 }
 
 #ovkDraw .lc-drawing.with-gui {
@@ -1868,6 +1877,7 @@ body.scrolled .toTop:hover, .toTop.has_down:hover {
 
 #ovkDraw .literally {
     border-radius: 0;
+    height: 510px;
 }
 
 #ovkDraw .literally .lc-picker,
@@ -2660,7 +2670,8 @@ a.poll-retract-vote {
 }
 
 .post-buttons .vertical-attachment .vertical-attachment-content { 
-    max-height: 27px;
+    /*max-height: 27px;*/
+    padding: 3px 2px;
 }
 
 .vertical-attachment .vertical-attachment-content .overflowedName {
@@ -3104,6 +3115,14 @@ a.poll-retract-vote {
     padding: 0px 1px;
 }
 
+.verticalGrayTabsPad {
+    padding: 0px 0px 0px 8px;
+}
+
+.deleted_mark_average {
+    padding: 5px 61px;
+}
+
 /* Options */
 
 .page_wrap_content .page_search_options {
@@ -3218,7 +3237,7 @@ a.poll-retract-vote {
 #docs_page_wrapper .container_white {
     display: flex;
     flex-direction: column;
-    padding: 5px 10px;
+    padding: 10px 10px;
 }
 
 #docs_page_wrapper .docs_page_content.docs_page_gallery .scroll_container {
@@ -3347,6 +3366,7 @@ a.poll-retract-vote {
 
 .docListViewItem .doc_icon.no_image span {
     color: #6b6b6b;
+    font-weight: bold;
 }
 
 .docListViewItem .doc_icon img {
@@ -3417,8 +3437,7 @@ a.poll-retract-vote {
 .attachments .docGalleryItem {
     display: block;
     min-width: 170px;
-    height: 170px;
-    width: 50%;
+    min-height: 170px;
     margin-bottom: 4px;
 }
 
@@ -3433,6 +3452,26 @@ a.poll-retract-vote {
 }
 
 /* Da search end. */
+
+.sort_link {
+    padding: 5px 2px;
+    display: inline-block;
+}
+
+.sort_link_icon {
+    background: url(/assets/packages/static/openvk/img/wall.png?v=3) no-repeat;
+    display: inline-block;
+    height: 11px;
+    width: 9px;
+}
+
+.sort_link_icon_desc {
+    background-position: 0px -15px;
+}
+
+.sort_link_icon_asc {
+    background-position: -11px -15px;
+}
 
 #standaloneCommentBox {
     position: sticky;
@@ -3465,6 +3504,15 @@ a.poll-retract-vote {
     display: flex;
     align-items: center;
     gap: 1px;
+    padding: 5px 9px;
+}
+
+.post-buttons .attachment_note {
+    padding: 3px 0px;
+}
+
+.attachments .attachment_note {
+    padding: 5px 5px;
 }
 
 .attachment_note svg {
@@ -3550,6 +3598,7 @@ body.article .floating_sidebar, body.article .page_content {
 .articleView_author > div {
     display: flex;
     flex-direction: column;
+    margin-top: 3px;
 }
 
 .articleView_author > div > span {
@@ -3647,6 +3696,7 @@ body.article .floating_sidebar, body.article .page_content {
     display: flex;
     flex-direction: column;
     gap: 22px;
+    padding: 5px 10px;
 }
 
 .sugglist {
@@ -3936,7 +3986,7 @@ hr {
 .entity_vertical_list {
     display: flex;
     flex-direction: column;
-    gap: 3px;
+    gap: 10px;
     height: 197px;
     overflow-y: auto;
 }
@@ -3944,6 +3994,7 @@ hr {
 .entity_vertical_list.scroll_container {
     height: unset;
     overflow-y: unset;
+    padding: 5px;
 }
 
 .entity_vertical_list .entity_vertical_list_item {
@@ -3955,11 +4006,15 @@ hr {
 }
 
 .entity_vertical_list.m_mini .entity_vertical_list_item .first_column {
-    gap: 10px;
+    gap: 13px;
+}
+
+.entity_vertical_list.m_mini .entity_vertical_list_item:hover .first_column a {
+    text-decoration: underline;
 }
 .entity_vertical_list.m_mini .entity_vertical_list_item .first_column .avatar img {
-    width: 30px;
-    height: 30px;
+    width: 40px;
+    height: 40px;
 }
 
 .entity_vertical_list .entity_vertical_list_item .first_column {
@@ -4096,17 +4151,23 @@ hr {
     display: none;
     position: fixed;
     top: -10%;
-    background: rgba(26, 26, 26, 0.9);;
+    background: rgba(0, 0, 0, 0.8);
+    box-shadow: 0px 0px 2px 0px black;
     padding-top: 12px;
     width: 91px;
     height: 25px;
     text-align: center;
-    border-radius: 1px;
+    border-radius: 2px;
     margin: auto;
     left: 0;
     right: 0;
     bottom: 0;
     z-index: 5555;
+}
+
+.object_fit_ava {
+    object-fit: cover;
+    object-position: top;
 }
 
 #ajloader.shown {
@@ -4168,6 +4229,15 @@ hr {
 #_feed_settings_container .entity_vertical_list {
     height: 206px;
     overflow-x: hidden;
+}
+
+.object_fit_ava {
+    object-fit: cover;
+    object-position: top;
+}
+
+body.ajax_request_made {
+    cursor: progress;
 }
 
 .like_tooltip_wrapper .like_tooltip_head {

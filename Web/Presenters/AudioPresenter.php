@@ -70,6 +70,10 @@ final class AudioPresenter extends OpenVKPresenter
         } else if ($mode === "new") {
             $audios = $this->audios->getNew();
             $audiosCount = $audios->size();
+        } elseif ($mode === "uploaded") {
+            $stream = $this->audios->getByUploader($this->user->identity);
+            $audios = $stream->page($page, 10);
+            $audiosCount = $stream->size();    
         } else if ($mode === "playlists") {
             if($owner < 0) {
                 $entity = (new Clubs)->get(abs($owner));
@@ -116,6 +120,11 @@ final class AudioPresenter extends OpenVKPresenter
         
         if(in_array($mode, ["list", "new", "popular"]) && $this->user->identity && $page < 2)
             $this->template->friendsAudios = $this->user->identity->getBroadcastList("all", true);
+    }
+
+    public function renderUploaded()
+    {
+        $this->renderList(null, "uploaded");
     }
 
     function renderEmbed(int $owner, int $id): void
@@ -779,6 +788,10 @@ final class AudioPresenter extends OpenVKPresenter
                 $audios = [$found_audio];
                 $audiosCount = 1;
                 break;
+            case "uploaded":
+                $stream = $this->audios->getByUploader($this->user->identity);
+                $audios = $stream->page($page, $perPage);
+                $audiosCount = $stream->size();    
         }
 
         $pagesCount = ceil($audiosCount / $perPage);

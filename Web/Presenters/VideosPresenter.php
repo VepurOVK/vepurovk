@@ -117,6 +117,7 @@ final class VideosPresenter extends OpenVKPresenter
         if($_SERVER["REQUEST_METHOD"] === "POST") {
             $video->setName(empty($this->postParam("name")) ? NULL : $this->postParam("name"));
             $video->setDescription(empty($this->postParam("desc")) ? NULL : $this->postParam("desc"));
+            $video->setUnlisted(false);
             $video->save();
             
             $this->flash("succ", tr("changes_saved"), tr("changes_saved_video_comment"));

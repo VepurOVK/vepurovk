@@ -1367,7 +1367,7 @@ class User extends RowModel
         return $this->getId();
     }
 
-    function toVkApiStruct(?User $user = NULL, string $fields = ''): object
+    public function toVkApiStruct(?User $relation_user = null, string $fields = ''): object
     {
         $res = (object) [];
 
@@ -1377,8 +1377,9 @@ class User extends RowModel
         $res->deactivated = $this->isDeactivated();
         $res->is_closed   = $this->isClosed();
 
-        if(!is_null($user))
-            $res->can_access_closed  = (bool)$this->canBeViewedBy($user);
+        if (!is_null($relation_user)) {
+            $res->can_access_closed  = (bool) $this->canBeViewedBy($relation_user);
+            }
 
         if(!is_array($fields))
             $fields = explode(',', $fields);
@@ -1432,17 +1433,17 @@ class User extends RowModel
                     $res->real_id = $this->getRealId();
                     break;
                 case "blacklisted_by_me":
-                    if(!$user) {
-                        continue;
+                    if (!$relation_user) {
+                        break;
                     }
-                    $res->blacklisted_by_me = (int)$this->isBlacklistedBy($user);
+                    $res->blacklisted_by_me = (int) $this->isBlacklistedBy($relation_user);
                     break;
                 case "blacklisted":
-                    if(!$user) {
-                        continue;
+                    if (!$relation_user) {
+                        break;
                     }
                     
-                    $res->blacklisted = (int)$user->isBlacklistedBy($this);
+                    $res->blacklisted = (int) $relation_user->isBlacklistedBy($this);
                     break;    
             }
         }
