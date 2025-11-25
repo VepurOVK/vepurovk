@@ -848,6 +848,11 @@
 "time_today" = "сьогодні";
 "time_yesterday" = "вчора";
 "points" = "Голоси";
+"bday_reminder" = "Нагадування";
+"bday_today" = "Сьогодні";
+"bday_tomorrow" = "Завтра";
+"bday_reminder_text" = "$1 день народження $2.";
+"bday_and" = " та ";
 "points_count" = "голосів";
 "on_your_account" = "на вашому рахунку";
 "top_up_your_account" = "Поповнити баланс";

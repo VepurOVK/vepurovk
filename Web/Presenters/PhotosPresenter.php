@@ -68,8 +68,8 @@ final class PhotosPresenter extends OpenVKPresenter
         if($_SERVER["REQUEST_METHOD"] === "POST") {
             if(empty($this->postParam("name")) || mb_strlen(trim($this->postParam("name"))) === 0)
                 $this->flashFail("err", tr("error"), tr("error_segmentation")); 
-            else if(strlen($this->postParam("name")) > 36)
-                $this->flashFail("err", tr("error"), tr("error_data_too_big", "name", 36, "bytes")); 
+            else if(strlen($this->postParam("name")) > 60)
+                $this->flashFail("err", tr("error"), tr("error_data_too_big", "name", 60, "bytes")); 
 
             $album = new Album;
             $album->setOwner(isset($club) ? $club->getId() * -1 : $this->user->id);
@@ -228,26 +228,20 @@ final class PhotosPresenter extends OpenVKPresenter
         $this->assertUserLoggedIn();
         $this->willExecuteWriteAction(true);
 
-        $upload_context = $this->queryParam("upload_context");
-
         if(is_null($this->queryParam("album"))) {
-            if ((int) $upload_context == $this->user->id) {
-                $album = $this->albums->getUserWallAlbum($this->user->identity);
-            }
+            $album = $this->albums->getUserWallAlbum($this->user->identity);
         } else {
             [$owner, $id] = explode("_", $this->queryParam("album"));
             $album = $this->albums->get((int) $id);
         }
 
-        if ($_SERVER["REQUEST_METHOD"] == "GET" || $this->queryParam("act") == "finish") {
-            if (!$album) {
-                $this->flashFail("err", tr("error"), tr("error_adding_to_deleted"));
-            }
-        }    
+        if(!$album)
+            $this->flashFail("err", tr("error"), tr("error_adding_to_deleted"), 500, true);
 
-        if ($album && !$album->canBeModifiedBy($this->user->identity)) {
-            $this->flashFail("err", tr("error_access_denied_short"), tr("error_access_denied"));
-        }
+        # Для быстрой загрузки фоток из пикера фотографий нужен альбом, но юзер не может загружать фото
+        # в системные альбомы, так что так.
+        if(is_null($this->user) || !is_null($this->queryParam("album")) && !$album->canBeModifiedBy($this->user->identity))
+            $this->flashFail("err", tr("error_access_denied_short"), tr("error_access_denied"), 500, true);
         
         if($_SERVER["REQUEST_METHOD"] === "POST") {
             if($this->queryParam("act") == "finish") {
@@ -264,6 +258,8 @@ final class PhotosPresenter extends OpenVKPresenter
 
                     $phot->setDescription($description);
                     $phot->save();
+
+                    $album = $phot->getAlbum();
                 }
 
                 $this->returnJson(["success" => true,
@@ -300,11 +296,9 @@ final class PhotosPresenter extends OpenVKPresenter
                     $this->flashFail("err", "Неизвестная ошибка", "Не удалось сохранить фотографию в $name.", 500, true);
                 }
 
-                if ($album != null) {
-                    $album->addPhoto($photo);
-                    $album->setEdited(time());
-                    $album->save();
-                }
+                $album->addPhoto($photo);
+                $album->setEdited(time());
+                $album->save();
             }
 
             $this->returnJson(["success" => true,

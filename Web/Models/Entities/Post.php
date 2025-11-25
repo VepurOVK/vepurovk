@@ -164,11 +164,13 @@ class Post extends Postable
         if($forAPI) {
             switch ($platform) {
                 case 'openvk_refresh_android':
+                case 'OpenVK Native':
                 case 'openvk_legacy_android':
                     return 'android';
                     break;
 
                 case 'openvk_ios':
+                case 'OpenVK Native iOS':
                 case 'openvk_legacy_ios':
                     return 'iphone';
                     break;

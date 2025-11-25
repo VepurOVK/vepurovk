@@ -3,11 +3,11 @@ body.dimmed > .dimmer {
     position: fixed;
     width: 100%;
     height: 100%;
-    background-color: #000;
-    opacity: .5;
+    background-color: #000000cf;
+    opacity: 1;
 }
 
-body.dimmed > .dimmer #absolute_territory {
+body.dimmed > .dimmer #clickable {
     margin: 100px;
     height: 100%;
 }
@@ -21,7 +21,7 @@ body.dimmed > .dimmer #absolute_territory {
     left: 50%;
     margin-right: -50%;
     transform: translate(-50%, -50%);
-    background-color: #c7bdbd94;
+    background-color: #c7bdbd1a;
 }
 
 .ovk-diag {
@@ -39,8 +39,7 @@ body.dimmed > .dimmer #absolute_territory {
 }
 
 .ovk-diag-head {
-    height: 25%;
-    padding: 5px;
+    padding: 10px 12px;
     background-color: #757575;
     border-bottom: 1px solid #3e3e3e;
     color: #fff;
@@ -48,10 +47,13 @@ body.dimmed > .dimmer #absolute_territory {
     font-size: 15px;
 }
 
+.ovk-msg-all .ovk-diag-head {
+    padding: 10px 12px 9px 12px;
+}
+
 .ovk-diag-body {
     padding: 20px;
     min-height: 110px;
-    max-height: 83vh
 }
 
 .ovk-diag-action {

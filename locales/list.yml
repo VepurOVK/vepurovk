@@ -12,7 +12,7 @@ list:
   - code: "ua"
     flag: "ua"
     name: "Ukrainian"
-    native_name: "Україньска"
+    native_name: "Українська"
     author: "Andrej Lenťaj, Maxim Hrabovi (dechioyo) and Kirill (mbsoft)"
   - code: "by"
     flag: "by"

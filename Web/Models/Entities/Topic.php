@@ -42,6 +42,11 @@ class Topic extends Postable
         return (bool) $this->getRecord()->pinned;
     }
 
+    public function isRestricted(): bool
+    {
+        return (bool) $this->getRecord()->restricted;
+    }
+
     function getPrettyId(): string
     {
         return $this->getRecord()->group . "_" . $this->getVirtualId();

@@ -446,6 +446,10 @@
                     <td class="e">Initial hosting VepurOVK</td>
                     <td class="v">Vyacheslav Petrov (saursvepur)</td>
                 </tr>
+                 <tr>
+                    <td class="e">Initial hosting OpenVK</td>
+                    <td class="v">Jill Fiore (Lumaeris) and Celestora</td>
+                </tr>
                 <tr>
             </tbody>
         </table>
@@ -458,6 +462,21 @@
                 <tr class="e">
                     <td>
                         Vyacheslav Petrov (saursvepur) and unknown tester, who disappeared shortly after trying to upload post with cat.
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        <table>
+            <tbody>
+                <tr class="h">
+                    <th>OpenVK QA Team</th>
+                </tr>
+                <tr class="e">
+                    <td>
+                        kovaltim, Vladimir Lapskiy (0x7d5), Alexander Minkin (WerySkok), Polina Katunina (ktp0li), veth,
+                        Egor Shevchenko, Vadim Korovin (yuni), Ash Defenders,
+                        Pavel Silaev, Dmitriy Daemon, Jill Fiore (Lumaeris),
+                        cmed404 and unknown tester, who disappeared shortly after trying to upload post with cat.
                     </td>
                 </tr>
             </tbody>

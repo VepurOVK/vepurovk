@@ -17,6 +17,8 @@
             {/if}
         {/if}
 
+        {* remove the "n:if" if you having issues with your theme *}
+
         <link n:if="$theme->getId() != 'mobile_ovk'" rel="stylesheet" href="/themepack/{$theme->getId()}/{$theme->getVersion()}/stylesheet/styles.css" />
 
         {if $isXmas}

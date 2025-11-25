@@ -267,6 +267,22 @@ abstract class OpenVKPresenter extends SimplePresenter
                 $this->template->helpdeskTicketNotAnsweredCount = (new Tickets)->getTicketCount(0);
                 $this->template->reportNotAnsweredCount = (new Reports)->getReportsCount(0);
             }
+
+            if ($user->can("admin")->model("openvk\Web\Models\Entities\Report")->whichBelongsTo(0)) {
+                $this->template->reportNotAnsweredCount = (new Reports())->getReportsCount(0);
+            }
+
+            $bdays = $this->user->identity->getFriendsBday(true);
+            if (sizeof($bdays) == 0) {
+                $bdays = $this->user->identity->getFriendsBday(false);
+            }
+
+            if (sizeof($bdays) > 0) {
+                $this->template->showBday = true;
+                $this->template->isBdayToday = $bdays["isToday"];
+                $this->template->bdayUsers = $bdays["users"];
+                $this->template->bdayCount = sizeof($bdays["users"]);
+            }
         }
 
         header("X-Accel-Expires: $cacheTime");
@@ -289,6 +305,8 @@ abstract class OpenVKPresenter extends SimplePresenter
 
         parent::onStartup();
     }
+
+    
     
     function onBeforeRender(): void
     {

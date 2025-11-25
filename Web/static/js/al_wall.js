@@ -616,7 +616,7 @@ $(document).on("click", "#_ajaxDelete", function(e) {
         },
         Function.noop
     ]);
-
+    
     e.stopPropagation()
     return e.preventDefault();
 });
@@ -840,7 +840,6 @@ tippy.delegate("body", {
     target: '.client_app',
     theme: "light vk",
     content: "⌛",
-    delay: 300,
     allowHTML: true,
     interactive: true,
     interactiveDebounce: 500,
@@ -880,7 +879,6 @@ tippy.delegate('body', {
     target: `.post-like-button[data-type]:not([data-likes="0"])`,
     theme: "special vk",
     content: "⌛",
-    delay: 300,
     allowHTML: true,
     interactive: true,
     interactiveDebounce: 500,
@@ -1287,7 +1285,7 @@ async function __uploadToTextarea(file, textareaNode) {
         const rand = random_int(0, 1000)
         textareaNode.find('.post-horizontal').append(`<a id='temp_filler${rand}' class="upload-item lagged"><img src='${temp_url}'></a>`)
         
-        const res = await fetch(`/photos/upload?upload_context=${textareaNode.nodes[0].dataset.id}`, {
+        const res = await fetch(`/photos/upload`, {
             method: 'POST',
             body: form_data
         })
@@ -1455,7 +1453,7 @@ u(document).on("click", "#__photoAttachment", async (e) => {
             if(album == 0) {
                 photos = await window.OVKAPI.call('photos.getAll', {'owner_id': window.openvk.current_id, 'photo_sizes': 1, 'count': photos_per_page, 'offset': page * photos_per_page})
             } else {
-                photos = await window.OVKAPI.call('photos.get', {'owner_id': club != 0 ? Math.abs(club) * -1 : window.openvk.current_id, 'album_id': album, 'photo_sizes': 1, 'count': photos_per_page, 'offset': page * photos_per_page})
+                photos = await window.OVKAPI.call('photos.get', {'owner_id': window.openvk.current_id, 'album_id': album, 'photo_sizes': 1, 'count': photos_per_page, 'offset': page * photos_per_page})
             }
         } catch(e) {
             u("#attachment_insert_count h4").html(tr("is_x_photos", -1))
@@ -1548,7 +1546,6 @@ u(document).on("click", "#__photoAttachment", async (e) => {
         u('.ovk-diag-body #albumSelect').append(`<option value="${item.vid}">${ovk_proc_strtr(escapeHtml(item.title), 20)}</option>`)
     })
 })
-
 
 u(document).on('click', '#__videoAttachment', async (e) => {
     const per_page = 10
@@ -2057,10 +2054,10 @@ async function repost(id, repost_type = 'post') {
         title: tr('share'),
         unique_name: 'repost_modal',
         body: `
-            <div class='display_flex_column' style='gap: 5px;'>
+            <div class='display_flex_column' style='gap: 1px;'>
                 <b>${tr('auditory')}</b>
                 
-                <div class='display_flex_column' style="gap: 2px;padding-left: 1px;">
+                <div class='display_flex_column'>
                     <label>
                         <input type="radio" name="repost_type" value="wall" checked>
                         ${tr("in_wall")}
@@ -2076,14 +2073,12 @@ async function repost(id, repost_type = 'post') {
 
                 <b>${tr('your_comment')}</b>
 
-                <div style="padding-left: 1px;">
-                    <input type='hidden' id='repost_attachments'>
-                    <textarea id='repostMsgInput' placeholder='...'></textarea>
+                <input type='hidden' id='repost_attachments'>
+                <textarea id='repostMsgInput' placeholder='...'></textarea>
 
                 <div id="repost_signs" class='display_flex_column' style='display:none;'>
-                        <label><input type='checkbox' name="asGroup">${tr('post_as_group')}</label>
-                        <label><input type='checkbox' name="signed">${tr('add_signature')}</label>
-                    </div>
+                    <label><input type='checkbox' name="asGroup">${tr('post_as_group')}</label>
+                    <label><input type='checkbox' name="signed">${tr('add_signature')}</label>
                 </div>
             </div>
         `,
@@ -2152,7 +2147,7 @@ async function repost(id, repost_type = 'post') {
         ]
     });
     
-    u('.ovk-diag-body').attr('style', 'padding: 18px;')
+    u('.ovk-diag-body').attr('style', 'padding: 14px;')
     u('.ovk-diag-body').on('change', `input[name='repost_type']`, (e) => {
         const value = e.target.value
 
@@ -2178,7 +2173,6 @@ async function repost(id, repost_type = 'post') {
 
     if(window.openvk.writeableClubs.items.length < 1) {
         u(`input[name='repost_type'][value='group']`).attr('disabled', 'disabled')
-        u(`input[name='repost_type'][value='group']`).closest("label").addClass("lagged")
     }
 }
 
@@ -2297,8 +2291,10 @@ $(document).on("click", "#add_image", (e) => {
                         document.querySelector("#bigAvatar").src = response.url
                         document.querySelector("#bigAvatar").parentNode.href = "/photo" + response.new_photo
                     
-                        document.querySelector(".add_image_text").style.display = "none"
                         document.querySelector(".avatar_controls").style.display = "block"
+                        document.querySelector(".avatar_controls .set_image").style.display = "block"
+						document.querySelector(".avatar_controls .avatarDelete").style.display = "block"
+                        document.querySelector(".avatar_controls .upload_image").style.display = "none"
                     }
                 })
             })
@@ -2431,8 +2427,9 @@ $(document).on("click", ".avatarDelete", (e) => {
                     document.querySelector("#bigAvatar").parentNode.href = response.new_photo ? ("/photo" + response.new_photo) : "javascript:void(0)"
                     
                     if(!response.has_new_photo) {
-                        document.querySelector(".avatar_controls").style.display = "none"
-                        document.querySelector(".add_image_text").style.display = "block"
+                        document.querySelector(".avatar_controls .set_image").style.display = "none"
+                        document.querySelector(".avatar_controls .avatarDelete").style.display = "none"
+                        document.querySelector(".avatar_controls .upload_image").style.display = "block"
                     }
                 }
             })
@@ -2832,7 +2829,7 @@ if(Number(localStorage.getItem('ux.gif_autoplay') ?? 0) == 1) {
         rootMargin: '0px',
         threshold: 0,
     })
-
+    
     if(u('.docGalleryItem').length > 0) {
         u('.docGalleryItem').nodes.forEach(item => {
             showMoreObserver.observe(item)

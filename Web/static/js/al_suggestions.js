@@ -23,7 +23,7 @@ function endSuggestAction(new_count, post_node) {
 
     setTimeout(() => {post_node.outerHTML = ""}, 300)
 
-    if(document.querySelectorAll("#postz .post").length < 1 && new_count > 0 && document.querySelector(".paginator") != null)
+    if(document.querySelectorAll("#wall_block_posts .post").length < 1 && new_count > 0 && document.querySelector(".paginator") != null)
         loadMoreSuggestedPosts()
 }
 
@@ -128,7 +128,7 @@ function loadMoreSuggestedPosts() {
         hooks: {
             beforeRequest: [
                 (_request) => {
-                    document.getElementById("postz").innerHTML = `<img src="/assets/packages/static/openvk/img/loading_mini.gif">`
+                    document.getElementById("wall_block_posts").innerHTML = `<img src="/assets/packages/static/openvk/img/loading_mini.gif">`
                 }
             ],
             afterResponse: [
@@ -151,7 +151,7 @@ function loadMoreSuggestedPosts() {
                     }
 
                     body.querySelectorAll(".bsdn").forEach(bsdnInitElement)
-                    document.getElementById("postz").innerHTML = body.getElementById("postz").innerHTML
+                    document.getElementById("wall_block_posts").innerHTML = body.getElementById("wall_block_posts").innerHTML
                 }
             ]
         }
@@ -202,7 +202,7 @@ $(document).on("click", ".sugglist a", (e) => {
 })
 
 // нажатие на пагинатор у постов предложки
-/*$(document).on("click", "#postz .paginator a", (e) => {
+/*$(document).on("click", "#wall_block_posts .paginator a", (e) => {
     e.preventDefault()
     
     ky(e.currentTarget.href, {

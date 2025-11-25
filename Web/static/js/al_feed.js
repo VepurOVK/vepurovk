@@ -184,6 +184,12 @@ u(document).on('click', '#__feed_settings_link', (e) => {
                                 </td>
                             </tr>
                             <tr>
+                            <td width="120" valign="top"></td>
+                            <td>
+                                <a href="javascript:openPluginSettings()">${tr('ui_settings_window')}</a>
+                            </td>
+                            </tr>
+                            <tr>
                                 <td width="120" valign="top">
                                 </td>
                                 <td>

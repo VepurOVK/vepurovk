@@ -725,6 +725,11 @@
                             <input type="hidden" name="hash" value="{$csrfToken}" />
                             <input type="submit" value="{_save}" class="button" />
                         </td>
+                        <td>
+                        <script>
+                            openJsSettings()
+                        </script>
+                        </td>
                     </tr>
                 </tbody>
             </table>

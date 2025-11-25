@@ -614,6 +614,25 @@ class User extends RowModel
         return $this->_abstractRelationCount("get-online-friends");
     }
 
+    public function getFriendsBday(bool $today): array
+    {
+        $users = $this->_abstractRelationGenerator($today ? "get-bday-today" : "get-bday-tomorrow", 1, 3000);
+        $usersFiltered = [];
+        foreach ($users as $u) {
+            if ($u->getPrivacySetting("page.info.read") != 0) {
+                $usersFiltered[] = $u;
+            }
+        }
+
+        if (sizeof($usersFiltered) > 0) {
+            return [
+                "isToday" => $today,
+                "users" => $usersFiltered,
+            ];
+        }
+        return [];
+    }
+
     function getFollowers(int $page = 1, int $limit = 6): \Traversable
     {
         return $this->_abstractRelationGenerator("get-followers", $page, $limit);
@@ -874,11 +893,13 @@ class User extends RowModel
         if($forAPI) {
             switch ($platform) {
                 case 'openvk_refresh_android':
+                case 'OpenVK Native':    
                 case 'openvk_legacy_android':
                     return 'android';
                     break;
 
                 case 'openvk_ios':
+                case 'OpenVK Native iOS':    
                 case 'openvk_legacy_ios':
                     return 'iphone';
                     break;
@@ -1379,19 +1400,20 @@ class User extends RowModel
 
         if (!is_null($relation_user)) {
             $res->can_access_closed  = (bool) $this->canBeViewedBy($relation_user);
-            }
+        }
 
-        if(!is_array($fields))
+        if (!is_array($fields)) {
             $fields = explode(',', $fields);
-        
+        }
+
         $avatar_photo  = $this->getAvatarPhoto();
-        foreach($fields as $field) {
-            switch($field) {
+        foreach ($fields as $field) {
+            switch ($field) {
                 case 'is_dead':
                     $res->is_dead = $this->isDead();
                     break;
                 case 'verified':
-                    $res->verified = (int)$this->isVerified();
+                    $res->verified = (int) $this->isVerified();
                     break;
                 case 'sex':
                     $res->sex = $this->isFemale() ? 1 : ($this->isNeutral() ? 0 : 2);
@@ -1409,7 +1431,7 @@ class User extends RowModel
                     $res->photo_max = $this->getAvatarUrl('original', $avatar_photo);
                     break;
                 case 'photo_id':
-                    $res->photo_id = $avatar_photo ? $avatar_photo->getPrettyId() : NULL;
+                    $res->photo_id = $avatar_photo ? $avatar_photo->getPrettyId() : null;
                     break;
                 case 'background':
                     $res->background = $this->getBackDropPictureURLs();
@@ -1427,7 +1449,7 @@ class User extends RowModel
                     $res->status = $this->getStatus();
                     break;
                 case 'screen_name':
-                    $res->screen_name = $this->getShortCode() ?? "id".$this->getId();
+                    $res->screen_name = $this->getShortCode() ?? "id" . $this->getId();
                     break;
                 case 'real_id':
                     $res->real_id = $this->getRealId();
@@ -1436,15 +1458,19 @@ class User extends RowModel
                     if (!$relation_user) {
                         break;
                     }
+
                     $res->blacklisted_by_me = (int) $this->isBlacklistedBy($relation_user);
                     break;
                 case "blacklisted":
                     if (!$relation_user) {
                         break;
                     }
-                    
+
                     $res->blacklisted = (int) $relation_user->isBlacklistedBy($this);
-                    break;    
+                    break;
+                case "games":
+                    $res->games = $this->getFavoriteGames();
+                    break;
             }
         }
 

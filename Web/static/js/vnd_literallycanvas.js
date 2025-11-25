@@ -6432,3 +6432,19 @@ module.exports = tools;
 
 },{}]},{},[22])(22)
 });
+
+document.addEventListener('keydown', function (e) {
+  const redoBtn = document.querySelector(".lc-redo")
+  const undoBtn = document.querySelector(".lc-undo")
+
+  if (e.ctrlKey && undoBtn && redoBtn) {
+      if ((e.code === "KeyY") || (e.code === "KeyZ" && e.shiftKey)) {
+          e.preventDefault()
+          redoBtn.click()
+      }
+      else if (e.code === "KeyZ") {
+          e.preventDefault()
+          undoBtn.click()
+      }
+  }
+})

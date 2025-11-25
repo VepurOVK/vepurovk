@@ -52,6 +52,6 @@ class EntityStream implements \IteratorAggregate
     
     function size(): int
     {
-        return sizeof($this->dbs());
+        return $this->dbs()->count("*");
     }
 }

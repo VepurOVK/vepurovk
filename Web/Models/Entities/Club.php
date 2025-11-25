@@ -425,11 +425,6 @@ class Club extends RowModel
         return (bool) $this->getRecord()->everyone_can_upload_audios;
     }
 
-    public function delete(bool $softly = true): void
-    {
-        $this->ban("");
-    }
-
     function canUploadAudio(?User $user): bool
     {
         if(!$user)

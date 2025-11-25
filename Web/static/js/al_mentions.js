@@ -23,7 +23,6 @@ tippy.delegate("body", {
     target: '.mention',
     theme: "light vk",
     content: "⌛",
-    delay: 200,
     allowHTML: true,
     interactive: true,
     interactiveDebounce: 500,
