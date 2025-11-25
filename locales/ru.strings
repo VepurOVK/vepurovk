@@ -1707,7 +1707,7 @@
 
 "admin_overview_registrated_users_one" = "зарегистрированный пользователь:";
 "admin_overview_registrated_users_other" = "зарегистрированных пользователей, из них:";
-"online" = "в сети";
+"online" = "Онлайн";
 "active_one" = "активный";
 "active_other" = "активных";
 "verified_one" = "верифицированный";
