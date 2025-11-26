@@ -346,7 +346,7 @@ h1 {
 }
 
 .page_wrap.padding_top {
-    padding-top: 12px;
+    padding-top: 10px;
 }
 
 .content-main-tile {
@@ -1782,27 +1782,61 @@ body.scrolled .toTop:hover, .toTop.has_down:hover {
     color: unset;
 }
 
+.gift_cat_row:first-child {
+    padding-top: 5px;
+}
+.gift_cat_row:last-child {
+    padding-bottom: 0;
+}
+.gift_cat_row {
+    padding: 13px 0 5px;
+}
+.gift_cat_row:not(:last-child) {
+    border-bottom: #dddddd 1px solid;
+}
+
+h4.gift_cat_header {
+    border-bottom: 0;
+    padding-top: 3px;
+}
+.gift_cat_desc {
+    margin: 5px 0 2px;
+}
+
 .gift_grid {
-    width: 100%;
-    display: grid;
-    grid-template-columns: 1fr 1fr 1fr 1fr;
+    width: calc(100% + 16px);
+    margin: 0 -8px;
+    display: flex;
+    flex-wrap: wrap;
 }
 
 .gift_sel {
+    width: 122px;
     display: grid;
     box-sizing: border-box;
-    padding: 15px 8px;
+    padding: 8px 10px;
     justify-items: center;
     cursor: pointer;
-    border-radius: 10px;
+    border-radius: 3px;
+    position: relative;
+    text-align: center;
+}
+
+.gift_info {
+    margin-top: 5px;
 }
 
 .gift_pic {
-    max-width: 70%;
+    transition: .2s;
+    width: 102px;
+    height: 102px;
+    object-fit: contain;
+    object-position: center;
+    border-radius: 3px;
 }
 
-.gift_sel:hover {
-    background-color: #f1f1f1;
+.gift_sel:hover .gift_pic {
+    opacity: .8;
 }
 
 .gift_sel.disabled:hover {
@@ -1811,12 +1845,38 @@ body.scrolled .toTop:hover, .toTop.has_down:hover {
 
 .gift_sel>.gift_price,
 .gift_sel>.gift_limit {
+    position: absolute;
+    visibility: hidden;
+    bottom: 0;
+    left: 0;
+    width: 102px;
+    background-color: rgb(240, 240, 240, .9);
+    border-radius: 3px;
+    margin: 0 10px;
+    padding: 3px 4px 4px;
+    box-sizing: border-box;
+}
+
+.gift_sel:hover>.gift_limit,
+.gift_sel .gift_free {
+    visibility: unset;
+}
+
+.gift_se.has_limitl:hover>.gift_free {
     visibility: hidden;
 }
 
-.gift_sel:hover>.gift_price,
-.gift_sel:hover>.gift_limit {
-    visibility: unset;
+.gift_send {
+    text-align: center;
+}
+.gift_send form {
+    margin: 10px auto 0;
+}
+.gift_send .gift_confirm_pic {
+    height: 256px;
+    width: 256px;
+    border-radius: 3px;
+    object-fit: contain;
 }
 
 .gift_sel.disabled {
@@ -4199,13 +4259,13 @@ hr {
     background-position-y: 9px;
 }
 
-#__feed_settings_link {
+.side_link {
     float: right;
     margin-right: 3px;
-    margin-top: 2px;
+    margin-top: 4px;
 }
 
-#__feed_settings_link:hover {
+.side_link:hover {
     text-decoration: underline;
 }
 
