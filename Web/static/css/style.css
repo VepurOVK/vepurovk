@@ -1286,6 +1286,11 @@ table.User {
     display: block;
 }
 
+.messenger-app--messages---message ._content .audioEmbed .title {
+    display: inline;
+    width: auto;
+}
+
 .messenger-app--messages---message ._content span {
     width: 100%;
     height: fit-content;
@@ -1297,7 +1302,7 @@ table.User {
 }
 
 .messenger-app--messages---message ._content .attachments>.msg-attach-j * {
-    max-width: 86%;
+    max-width: 100%;
 }
 
 .messenger-app--messages---message ._content .attachments:not(:empty) {
